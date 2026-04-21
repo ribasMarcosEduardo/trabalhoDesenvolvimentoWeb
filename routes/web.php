@@ -3,6 +3,7 @@
 use App\Http\Controllers\UnoescController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BovinoController;
+use App\Http\Controllers\FazendaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,7 +36,16 @@ Route::delete('/users/{user}/phone/{phone}', [UserController::class, 'deletePhon
 Route::get('/unoesc', [UnoescController::class, 'index']);
 Route::post('/unoesc', [UnoescController::class, 'login']);
 
-//Boi na Faixa
 Route::get('/users', [UserController::class, 'index']);
+
+//Boi na Faixa --------------------------------------------------
+
+//Exibe form de cadastro de bois
 Route::get('/bovinos/create', [BovinoController::class, 'create']);
+//Salva o form
 Route::post('/bovinos', [BovinoController::class, 'store']);
+//Exibe lista de bois
+Route::get('/bovinos', [BovinoController::class, 'index']);
+
+Route::get('fazendas/create', [FazendaController::class, 'create']);
+Route::post('fazendas', [FazendaController::class, 'store']);

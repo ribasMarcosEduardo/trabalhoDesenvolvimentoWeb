@@ -15,6 +15,7 @@ return new class extends Migration
         $table->id(); 
         $table->string('raca'); 
         $table->decimal('peso', 8, 2); 
+        $table->decimal('preco', 8, 2); 
         $table->integer('idade')->nullable();
         $table->string('imagem')->nullable(); 
         $table->timestamps(); 

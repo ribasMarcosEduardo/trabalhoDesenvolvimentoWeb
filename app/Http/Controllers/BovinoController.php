@@ -7,31 +7,41 @@ use Illuminate\Http\Request;
 
 class BovinoController extends Controller
 {
-    // Abre formulário
     public function create()
     {
         return view('bovinos.create');
     }
 
-    // Salva no banco
     public function store(Request $request)
-{
-    $request->validate([
-        'raca' => 'required',
-        'peso' => 'required|numeric',
-        'age'  => 'nullable|integer',
-        'imagem' => 'nullable|image'
-    ]);
+    {
+        $request->validate([
+            'raca'   => 'required|string|max:255',
+            'peso'   => 'required|numeric|min:0',
+            'preco'  => 'required|numeric|min:0',
+            'idade'  => 'nullable|integer|min:0',
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+        ]);
 
-    $data = $request->all();
+        $path = null;
 
-    if ($request->hasFile('imagem')) {
-        $path = $request->file('imagem')->store('bovinos', 'public');
-        $data['imagem'] = $path;
+        if ($request->hasFile('imagem')) {
+            $path = $request->file('imagem')->store('bovinos', 'public');
+        }
+
+        Bovino::create([
+            'raca'   => $request->raca,
+            'peso'   => $request->peso,
+            'preco'  => $request->preco,
+            'idade'  => $request->idade,
+            'imagem' => $path,
+        ]);
+
+        return redirect()->back()->with('success', 'Bovino cadastrado com sucesso!');
     }
 
-    Bovino::create($data);
-
-    return redirect()->back()->with('success', 'Bovino cadastrado com sucesso!');
-}
+    public function index()
+    {
+        $bovinos = Bovino::all(); 
+        return view('bovinos.index', compact('bovinos'));
+    }
 }

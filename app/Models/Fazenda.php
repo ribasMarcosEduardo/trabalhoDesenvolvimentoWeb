@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Bovino extends Model
+class Fazenda extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['raca', 'peso', 'preco', 'idade', 'imagem'];
+    protected $fillable = ['nome', 'localizacao'];
+
 }
