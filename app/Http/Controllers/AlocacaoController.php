@@ -2,23 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Bovino;
+use App\Models\Fazenda;
 use App\Models\Alocacao;
+use Illuminate\Http\Request;
 
 class AlocacaoController extends Controller
 {
-    public function store(Request $request) 
-    {
-   
-        $request->validate([
-            'bovino_id' => 'required|exists:bovinos,id',
-            'fazenda_id' => 'required|exists:fazendas,id',
-            'data_entrada' => 'required|date'
+    public static function getBovinosDisponiveis() {
+    return \App\Models\Bovino::whereDoesntHave('alocacoes')->get();
+    }
+
+    public static function getBovinosDaFazenda($fazenda_id) {
+        return Bovino::whereHas('alocacoes', function($query) use ($fazenda_id) {
+            $query->where('fazenda_id', $fazenda_id);
+        })->get();
+    }
+
+    // Vincula o bovino na fazenda
+    public function storeVincular(Request $request, $fazenda_id) {
+        Alocacao::create([
+            'fazenda_id' => $fazenda_id,
+            'bovino_id' => $request->bovino_id,
+            'data_entrada' => now()
         ]);
+        return redirect('/fazendas')->with('success', 'Bovino vinculado com sucesso!');
+    }
 
-    
-        \App\Models\Alocacao::create($request->all());
-
-        return redirect()->route('bovinos.index')->with('success', 'Bovino alocado com sucesso!');
+    // Remove o vínculo
+    public function destroyDesvincular($fazenda_id, $bovino_id) {
+        Alocacao::where('fazenda_id', $fazenda_id)
+                ->where('bovino_id', $bovino_id)
+                ->delete();
+        return redirect('/fazendas')->with('success', 'Bovino removido da fazenda!');
     }
 }

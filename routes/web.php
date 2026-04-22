@@ -4,6 +4,7 @@ use App\Http\Controllers\UnoescController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BovinoController;
 use App\Http\Controllers\FazendaController;
+use App\Http\Controllers\AlocacaoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,5 +48,16 @@ Route::post('/bovinos', [BovinoController::class, 'store']);
 //Exibe lista de bois
 Route::get('/bovinos', [BovinoController::class, 'index']);
 
-Route::get('fazendas/create', [FazendaController::class, 'create']);
-Route::post('fazendas', [FazendaController::class, 'store']);
+// Exibe lista de fazendas
+Route::get('/fazendas', [FazendaController::class, 'index']);
+// Exibe form de cadastro de fazendas
+Route::get('/fazendas/create', [FazendaController::class, 'create']);
+// Salva o form
+Route::post('/fazendas', [FazendaController::class, 'store']);
+
+// 1. Suas rotas personalizadas primeiro
+Route::post('/fazendas/{fazenda}/vincular', [AlocacaoController::class, 'storeVincular']);
+Route::delete('/fazendas/{fazenda}/desvincular/{bovino}', [AlocacaoController::class, 'destroyDesvincular']);
+
+// 2. Depois as rotas resource ou outras
+Route::resource('fazendas', FazendaController::class);
