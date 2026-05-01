@@ -1,7 +1,6 @@
-# Desenvolvimento Web e Aplicativos
+# 🐄 BoiNaFaixa - Gestão Agropecuária
 
-Projeto utilizado na disciplina **Desenvolvimento Web e Aplicativos** com objetivo de apresentar, de forma prática, os conceitos básicos de
-desenvolvimento web utilizando **Laravel** e **Docker**.
+O BoiNaFaixa é uma aplicação web desenvolvida na disciplina Desenvolvimento Web e Aplicativos. O objetivo do projeto é apresentar, de forma prática, os conceitos de gestão agropecuária através do controle de fazendas e alocação de bovinos, utilizando Laravel e Docker.
 
 
 ## 📌 Requisitos
@@ -50,8 +49,8 @@ Sugestão: **Visual Studio Code**
 ### 1️⃣ Clonar o repositório
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
-cd <PASTA_DO_PROJETO>
+git clone https://github.com/ribasMarcosEduardo/trabalhoDesenvolvimentoWeb.git
+cd trabalhoDesenvolvimentoWeb
 ```
 
 ---
@@ -78,6 +77,9 @@ Esse comando pode demorar alguns minutos na primeira execução.
 
 ```bash
 docker compose exec app composer install
+docker compose exec app php artisan key:generate 
+docker compose exec app php artisan migrate -- criar tabelas
+docker compose exec app php artisan migrate:fresh  -- refresh nas tabelas
 ```
 
 ---
@@ -119,8 +121,3 @@ Se você visualizar a página inicial do Laravel, o ambiente está funcionando �
   ```
 
 ---
-
-## 📚 Observação importante
-
-Este projeto será evoluído ao longo do semestre conforme os conteúdos da disciplina.
-Não altere a estrutura do Docker sem orientação do professor.
