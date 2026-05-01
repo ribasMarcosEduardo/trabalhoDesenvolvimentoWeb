@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class AlocacaoController extends Controller
 {
     public static function getBovinosDisponiveis() {
-    return \App\Models\Bovino::whereDoesntHave('alocacoes')->get();
+        return \App\Models\Bovino::whereDoesntHave('alocacoes')->get();
     }
 
     public static function getBovinosDaFazenda($fazenda_id) {
@@ -21,11 +21,19 @@ class AlocacaoController extends Controller
 
     // Vincula o bovino na fazenda
     public function storeVincular(Request $request, $fazenda_id) {
+
+        $quantidadeAtual = Alocacao::where('fazenda_id', $fazenda_id)->count();
+
+        if ($quantidadeAtual >= 5) {
+            return redirect('/fazendas')->with('error', 'Capacidade máxima atingida! Esta fazenda já possui 5 bovinos.');
+        }
+
         Alocacao::create([
             'fazenda_id' => $fazenda_id,
             'bovino_id' => $request->bovino_id,
             'data_entrada' => now()
         ]);
+        
         return redirect('/fazendas')->with('success', 'Bovino vinculado com sucesso!');
     }
 
@@ -34,6 +42,7 @@ class AlocacaoController extends Controller
         Alocacao::where('fazenda_id', $fazenda_id)
                 ->where('bovino_id', $bovino_id)
                 ->delete();
+                
         return redirect('/fazendas')->with('success', 'Bovino removido da fazenda!');
     }
 }

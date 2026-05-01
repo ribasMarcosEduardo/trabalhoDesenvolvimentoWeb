@@ -1,11 +1,17 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
+// Controllers
 use App\Http\Controllers\UnoescController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BovinoController;
 use App\Http\Controllers\FazendaController;
 use App\Http\Controllers\AlocacaoController;
-use Illuminate\Support\Facades\Route;
+// Models
+use App\Models\Bovino;
+use App\Models\Fazenda;
+use App\Models\Alocacao;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,46 +24,50 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Dashboard BoiNaFaixa
 Route::get('/', function () {
-    return view('welcome');
+    $totalBovinos = Bovino::count();
+    $totalFazendas = Fazenda::count();
+    
+    $bovinosAlocados = Alocacao::distinct('bovino_id')->count('bovino_id');
+
+    $bovinosLivres = $totalBovinos - $bovinosAlocados;
+
+    return view('dashboard', compact('totalBovinos', 'totalFazendas', 'bovinosLivres'));
 });
 
+// --------------------------------------------------
+// BOI NA FAIXA
+// --------------------------------------------------
 
-Route::get('/users/create', [UserController::class, 'create']);
-Route::post('/users/store', [UserController::class, 'store']);
-Route::get('/users/{user}', [UserController::class, 'edit']);
-Route::put('/users/{user}', [UserController::class, 'update']);
-Route::get('/users/{user}/delete', [UserController::class, 'confirmDelete']);
-Route::delete('/users/{user}', [UserController::class, 'delete']);
-
-Route::get('/users/{user}/phone', [UserController::class, 'createPhone']);
-Route::post('/users/{user}/phone', [UserController::class, 'storePhone']);
-Route::delete('/users/{user}/phone/{phone}', [UserController::class, 'deletePhone']);
-
-Route::get('/unoesc', [UnoescController::class, 'index']);
-Route::post('/unoesc', [UnoescController::class, 'login']);
-
-Route::get('/users', [UserController::class, 'index']);
-
-//Boi na Faixa --------------------------------------------------
-
-//Exibe form de cadastro de bois
+// ----- BOVINOS -----
+// Exibe form de cadastro de bois
 Route::get('/bovinos/create', [BovinoController::class, 'create']);
-//Salva o form
+// Salva o form
 Route::post('/bovinos', [BovinoController::class, 'store']);
-//Exibe lista de bois
+// Exibe lista de bois
 Route::get('/bovinos', [BovinoController::class, 'index']);
+// Exibe o form de edição
+Route::get('/bovinos/{bovino}/edit', [BovinoController::class, 'edit']);
+// Atualiza o bovino
+Route::put('/bovinos/{bovino}', [BovinoController::class, 'update']);
+// Exclui o bovino
+Route::delete('/bovinos/{bovino}', [BovinoController::class, 'destroy']);
 
+// ----- FAZENDAS -----
 // Exibe lista de fazendas
 Route::get('/fazendas', [FazendaController::class, 'index']);
 // Exibe form de cadastro de fazendas
 Route::get('/fazendas/create', [FazendaController::class, 'create']);
 // Salva o form
 Route::post('/fazendas', [FazendaController::class, 'store']);
+// Exibe o form de edição
+Route::get('/fazendas/{fazenda}/edit', [FazendaController::class, 'edit']);
+// Atualiza a fazenda
+Route::put('/fazendas/{fazenda}', [FazendaController::class, 'update']);
+// Exclui a fazenda
+Route::delete('/fazendas/{fazenda}', [FazendaController::class, 'destroy']);
 
-// 1. Suas rotas personalizadas primeiro
+// ----- ALOCAÇÕES -----
 Route::post('/fazendas/{fazenda}/vincular', [AlocacaoController::class, 'storeVincular']);
 Route::delete('/fazendas/{fazenda}/desvincular/{bovino}', [AlocacaoController::class, 'destroyDesvincular']);
-
-// 2. Depois as rotas resource ou outras
-Route::resource('fazendas', FazendaController::class);

@@ -19,6 +19,21 @@
     .empty-state { padding: 3rem; color: #adb5bd; }
 </style>
 
+<!-- Alertas de Sucesso e Erro com IDs -->
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" id="alertaSucesso" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" id="alertaErro" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
 <div class="card shadow-lg">
     <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center gap-2">
@@ -41,6 +56,7 @@
                         <th><i class="bi bi-speedometer2"></i> Peso (kg)</th>
                         <th><i class="bi bi-currency-dollar"></i> Preço (R$)</th>
                         <th><i class="bi bi-calendar3"></i> Idade (anos)</th>
+                        <th><i class="bi bi-gear"></i> Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,10 +78,27 @@
                             <td>{{ number_format($bovino->peso, 2, ',', '.') }}</td>
                             <td><span class="fw-semibold text-success">R$ {{ number_format($bovino->preco, 2, ',', '.') }}</span></td>
                             <td>{{ $bovino->idade ? $bovino->idade . ' anos' : '-' }}</td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <!-- Botão Editar -->
+                                    <a href="/bovinos/{{ $bovino->id }}/edit" class="btn btn-sm btn-outline-primary" title="Editar">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    
+                                    <!-- Formulário Excluir -->
+                                    <form action="/bovinos/{{ $bovino->id }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este bovino?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6"><div class="empty-state">Nenhum bovino cadastrado ainda.</div></td>
+                            <td colspan="7"><div class="empty-state">Nenhum bovino cadastrado ainda.</div></td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -73,4 +106,21 @@
         </div>
     </div>
 </div>
+
+<script>
+
+    function ocultarAlerta(id) {
+        const aviso = document.getElementById(id);
+        if (aviso) {
+            setTimeout(() => {
+                aviso.style.transition = "opacity 0.5s ease";
+                aviso.style.opacity = "0";
+                setTimeout(() => aviso.remove(), 500);
+            }, 3000);
+        }
+    }
+
+    ocultarAlerta('alertaSucesso');
+    ocultarAlerta('alertaErro');
+</script>
 @endsection
